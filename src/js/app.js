@@ -2,6 +2,8 @@ App = {
   web3Provider: null,
   contracts: {},
 
+  var tokenRegistry = []
+
   init: function() {
     // Load pets.
     $.getJSON('../pets.json', function(data) {
@@ -39,23 +41,20 @@ App = {
 	var crowdsaleInstance;
 
 	logArray = []
-	web3.eth.getAccounts(function(error, accounts) {
-		if (error) {
-			console.log(error);
-		}
 		
-		var account = accounts[3];
-		App.contracts.Crowdsale.deployed().then(function(instance){
-			crowdsaleInstance = instance;
-			let purchaseEvent = crowdsaleInstance.TokenPurchase({}, {fromBlock: 0, toBlock: 'latest'});
-			purchaseEvent.get((error, logs) => {
-				logs.forEach(log => console.log(log.args))
-				logs.forEach(log => logArray.push(log))
-				console.log(logArray[0])
-				App.drawTable(logArray);
-			});
+	var account = accounts[3];
+	App.contracts.Crowdsale.deployed().then(function(instance){
+		crowdsaleInstance = instance;
+		let purchaseEvent = crowdsaleInstance.TokenPurchase({}, {fromBlock: 0, toBlock: 'latest'});
+		purchaseEvent.get((error, logs) => {
+			logs.forEach(log => console.log(log.args))
+			logs.forEach(log => logArray.push(log))
+			console.log(logArray[0])
+			App.drawTable(logArray);
 		});
-  	});
+	});
+
+	return logArray;
   },
 
 
@@ -71,8 +70,7 @@ App = {
 		
 		var account = accounts[3];
 		App.contracts.Crowdsale.deployed().then(function(instance){
-			crowdsaleInstance = instance;
-			let purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0, toBlock: 'latest'});
+			crowdsaleInstance = instance			let purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0, toBlock: 'latest'});
 			purchaseEvent.watch((error, logs) => {
 				console.log(logs);
 				console.log(logArray);
@@ -147,6 +145,38 @@ App = {
 	});
 	//return App.watchLog();
   },
+
+
+  
+  updateRegistry: function(transaction) {
+
+
+  }
+
+  createRegistry: function() {
+	  var holders = {}; // array of all token holders
+
+
+	App.contracts.Crowdsale.deployed().then(function(instance){
+		crowdsaleInstance = instance;
+		crowdsaleInstance.token.then(addr => {tokenAddress = addr});
+		tokenInstance = App.contracts.MintableToken.at(addr); 
+			logArray = App.getLog();
+	  for(var i=0; i < transLog.length; i++){
+		  //get balance of purchaser
+		  //if larger than 0 add to holders
+
+		  var trans = logArray[i].args
+		  holders[trans.purchaser] = {'balance':MintableToken.balanceOf(trans.purchaser)}
+		  
+	  }
+
+	}).catch(function(err){
+		console.log(err.message);
+	});
+
+
+  }
 
   markAdopted: function(adopters, account) {
 	var adoptionInstance;
