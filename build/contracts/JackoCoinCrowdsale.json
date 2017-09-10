@@ -398,8 +398,42 @@
       "links": {},
       "address": "0xa0c958c31caaef162babf3711d9377938bb50956",
       "updated_at": 1504956559184
+    },
+    "1505019701766": {
+      "events": {
+        "0x623b3804fa71d67900d064613da8f94b9617215ee90799290593e1745087ad18": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "purchaser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "beneficiary",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "TokenPurchase",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x827c396e062c2763320af4e15285652896725a5d",
+      "updated_at": 1505019779862
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1504956559184
+  "updated_at": 1505019779862
 }

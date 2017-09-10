@@ -74,6 +74,7 @@ App = {
 				logArray.push(logs);
 				console.log('Watch calling drawTable...')
 				App.drawTable(logArray);
+				App.createRegistry();
 			});
 		}).catch(function(err){
 			console.log(err.message);
@@ -176,15 +177,15 @@ App = {
 			tokenAddress = addr;
 			console.log(tokenAddress)
 			tokenInstance = App.contracts.MintableToken.at(tokenAddress); 
-			//logArray = App.getLog();
 		  	console.log('In create registry.');
-		  	//console.log(logArray);
-		  	//console.log(logArray.length);
-		  	// for some reason the array 
+			
+			// Get transaction history
 		  	App.getLog(function (logArray) {
 				console.log(logArray);
 			  	console.log(logArray.length);
 			  // i think forEach is blocking...
+			  // yes it is. Doesn't matter if you then make 
+			  // non blocking calls inside it
 				  // capture transaction to avoid async problems
 				let requests = logArray.map((item) => {
 					return new Promise((resolve) => {	  
