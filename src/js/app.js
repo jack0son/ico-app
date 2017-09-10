@@ -2,8 +2,6 @@ App = {
   web3Provider: null,
   contracts: {},
 
-  var tokenRegistry = []
-
   init: function() {
     // Load pets.
     $.getJSON('../pets.json', function(data) {
@@ -37,20 +35,19 @@ App = {
     return App.initContract();
   },
 
-  getLog: function() {
+  getLog: function(callback) {
 	var crowdsaleInstance;
 
-	logArray = []
-		
-	var account = accounts[3];
+	var logArray = [];
 	App.contracts.Crowdsale.deployed().then(function(instance){
 		crowdsaleInstance = instance;
 		let purchaseEvent = crowdsaleInstance.TokenPurchase({}, {fromBlock: 0, toBlock: 'latest'});
 		purchaseEvent.get((error, logs) => {
+			console.log('In getLog.');
 			logs.forEach(log => console.log(log.args))
 			logs.forEach(log => logArray.push(log))
-			console.log(logArray[0])
-			App.drawTable(logArray);
+			callback(logArray);
+			//console.log(logArray[0])
 		});
 	});
 
@@ -61,8 +58,7 @@ App = {
   watchLog: function() {
 	var crowdsaleInstance;
 
-	dicks = 'test'
-	logArray = []
+	var logArray = [];
 	web3.eth.getAccounts(function(error, accounts) {
 		if (error) {
 			console.log(error);
@@ -70,7 +66,8 @@ App = {
 		
 		var account = accounts[3];
 		App.contracts.Crowdsale.deployed().then(function(instance){
-			crowdsaleInstance = instance			let purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0, toBlock: 'latest'});
+			crowdsaleInstance = instance;
+			let purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0, toBlock: 'latest'});
 			purchaseEvent.watch((error, logs) => {
 				console.log(logs);
 				console.log(logArray);
@@ -78,12 +75,14 @@ App = {
 				console.log('Watch calling drawTable...')
 				App.drawTable(logArray);
 			});
+		}).catch(function(err){
+			console.log(err.message);
 		});
   	});
   },
 
   drawTable: function(logArray) {
-	  $("table tbody tr").remove();
+	  $(".log > tbody > tr").remove();
 
 	  for (var i = 0; i < logArray.length; i++) {
 		  console.log('In log array: ' + i)
@@ -93,7 +92,7 @@ App = {
 				+ parseInt(logArray[i].args.amount) + "  </td><td>" 
 				+ web3.toWei(parseInt(logArray[i].args.value),'ether') 
 				+ "</td></tr>";
-			$("table tbody").append(markup);
+			$(".log > tbody").append(markup);
 	  }
 
   },
@@ -107,16 +106,31 @@ App = {
 		//set the provider for our contract.
 		App.contracts.Crowdsale.setProvider(App.web3Provider);
 		//App.getLog();
-		App.watchLog();
+		//App.watchLog();
 		//user our contract to retrieve and mark the adopted pets.
 		// Call UI refresh function
 		//return App.markAdopted();
+	}).then(function () {
+		$.getJSON('JackoCoin.json', function(data) {
+			var MintableTokenArtifact = data;
+			App.contracts.MintableToken = TruffleContract(MintableTokenArtifact);
+			App.contracts.MintableToken.setProvider(App.web3Provider);
+
+			//App.createRegistry();
+		});
+	}).then(function () {
+    	return App.bindEvents();
 	});
-    return App.bindEvents();
   },
 
   bindEvents: function() {
     $(document).on('click', '.btn-adopt', App.handlePurchase);
+	return App.initUI();
+  },
+
+  initUI: function() {
+	  App.watchLog();
+	  App.createRegistry();
   },
 
   handlePurchase: function() {
@@ -151,32 +165,67 @@ App = {
   updateRegistry: function(transaction) {
 
 
-  }
+  },
 
   createRegistry: function() {
-	  var holders = {}; // array of all token holders
-
+	var holders = {}; // array of all token holders
 
 	App.contracts.Crowdsale.deployed().then(function(instance){
 		crowdsaleInstance = instance;
-		crowdsaleInstance.token.then(addr => {tokenAddress = addr});
-		tokenInstance = App.contracts.MintableToken.at(addr); 
-			logArray = App.getLog();
-	  for(var i=0; i < transLog.length; i++){
-		  //get balance of purchaser
-		  //if larger than 0 add to holders
+		crowdsaleInstance.token().then(addr => {
+			tokenAddress = addr;
+			console.log(tokenAddress)
+			tokenInstance = App.contracts.MintableToken.at(tokenAddress); 
+			//logArray = App.getLog();
+		  	console.log('In create registry.');
+		  	//console.log(logArray);
+		  	//console.log(logArray.length);
+		  	// for some reason the array 
+		  	App.getLog(function (logArray) {
+				console.log(logArray);
+			  	console.log(logArray.length);
+			  // i think forEach is blocking...
+				  // capture transaction to avoid async problems
+				let requests = logArray.map((item) => {
+					return new Promise((resolve) => {	  
+						//function(item, resolve){
+							let trans = item.args;	
+				  			tokenInstance.balanceOf(trans.purchaser).then(function(balance){
+					  			console.log(balance);
+					  			holders[trans.purchaser] = {'balance':balance}
+				  			}).then(function(){
+				 				console.log(holders[trans.purchaser]);
+								resolve();
+							});
+						//}
+					});
+				});
+				Promise.all(requests).then(() =>{
+					console.log('done');
+					App.drawRegistry(holders);
+				});
+				
+			});
+		});
+	});
+  },
 
-		  var trans = logArray[i].args
-		  holders[trans.purchaser] = {'balance':MintableToken.balanceOf(trans.purchaser)}
-		  
+
+  drawRegistry: function(holders) {
+	  $(".registry > tbody > tr").remove();
+	  console.log('Draw registry called.');
+	  console.log(holders)
+	  for (holder in holders) {
+		  console.log(holder);
+			var markup = "<tr><td>" 
+				+ holder + "</td><td>"
+				+ holders[holder]['balance']
+				+ "</td></tr>";
+			$(".registry > tbody").append(markup);
 	  }
 
-	}).catch(function(err){
-		console.log(err.message);
-	});
+  },
 
-
-  }
 
   markAdopted: function(adopters, account) {
 	var adoptionInstance;
