@@ -112,8 +112,8 @@ App = {
 				console.log(logs);
 				console.log(logArray);
 				logArray.push(logs);
-				console.log('Watch calling drawTable...')
-				App.drawTable(logArray);
+				console.log('Watch calling drawLog...')
+				App.drawLog(logArray);
 				App.createRegistry();
 			});
 		}).catch(function(err){
@@ -145,19 +145,18 @@ App = {
 			  // i think forEach is blocking...
 			  // yes it is. Doesn't matter if you then make 
 			  // non blocking calls inside it
-				  // capture transaction to avoid async problems
 				let requests = logArray.map((item) => {
 					return new Promise((resolve) => {	  
 						//function(item, resolve){
-							let trans = item.args;	
-				  			tokenInstance.balanceOf(trans.purchaser).then(function(balance){
-					  			console.log(balance);
-					  			holders[trans.purchaser] = {'balance':balance}
-				  			}).then(function(){
-				 				console.log(holders[trans.purchaser]);
-								resolve();
-							});
-						//}
+				  		// capture transaction to avoid async problems
+						let trans = item.args;	
+				  		tokenInstance.balanceOf(trans.purchaser).then(function(balance){
+					  		console.log(balance);
+					  		holders[trans.purchaser] = {'balance':balance}
+				  		}).then(function(){
+				 			console.log(holders[trans.purchaser]);
+							resolve();
+						});
 					});
 				});
 				Promise.all(requests).then(() =>{
