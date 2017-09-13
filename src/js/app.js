@@ -32,7 +32,6 @@ App = {
 			App.contracts.MintableToken = TruffleContract(MintableTokenArtifact);
 			App.contracts.MintableToken.setProvider(App.web3Provider);
 
-			//App.createRegistry();
 		});
 	}).then(function () {
     	return App.bindEvents();
@@ -46,7 +45,7 @@ App = {
 
   initUI: function() {
 	  App.watchLog();
-	  App.createRegistry();
+	  //App.createRegistry();
   },
 
   handlePurchase: function() {
@@ -127,49 +126,36 @@ App = {
 
   },
 
-  createRegistry: function() {
-	var holders = {}; // array of all token holders
+	createRegistry: function() {
+		var holders = {}; // array of all token holders
 
-	App.contracts.Crowdsale.deployed().then(function(instance){
-		crowdsaleInstance = instance;
-		crowdsaleInstance.token().then(addr => {
-			tokenAddress = addr;
-			console.log(tokenAddress)
-			tokenInstance = App.contracts.MintableToken.at(tokenAddress); 
-		  	console.log('In create registry.');
-			
-			// Get transaction history
-		  	App.getLog(function (logArray) {
-				console.log(logArray);
-			  	console.log(logArray.length);
-			  // i think forEach is blocking...
-			  // yes it is. Doesn't matter if you then make 
-			  // non blocking calls inside it
-				let requests = logArray.map((item) => {
-					return new Promise((resolve) => {	  
-						//function(item, resolve){
-				  		// capture transaction to avoid async problems
-						let trans = item.args;	
-				  		tokenInstance.balanceOf(trans.purchaser).then(function(balance){
-					  		console.log(balance);
-					  		holders[trans.purchaser] = {'balance':balance}
-				  		}).then(function(){
-				 			console.log(holders[trans.purchaser]);
-							resolve();
+		App.contracts.Crowdsale.deployed().then(function(instance){
+			crowdsaleInstance = instance;
+			crowdsaleInstance.token().then(addr => {
+				tokenAddress = addr;
+				console.log(tokenAddress)
+				tokenInstance = App.contracts.MintableToken.at(tokenAddress); 
+				
+				// Get transaction history
+				App.getLog(function (logArray) {
+					let promises = logArray.map((log) => {
+						return tokenInstance.balanceOf(log.args.purchaser).then(function(balance){
+								console.log(balance);
+								holders[log.args.purchaser] = {'balance':balance}
+								console.log(holders[log.args.purchaser]);
+							});
 						});
+
+					Promise.all(promises).then(() =>{
+						console.log('Done');
+						App.drawRegistry(holders);
 					});
 				});
-				Promise.all(requests).then(() =>{
-					console.log('done');
-					App.drawRegistry(holders);
-				});
-				
 			});
 		});
-	});
-  },
+	},
 
-  drawLog: function(logArray) {
+	drawLog: function(logArray) {
 	  $(".log > tbody > tr").remove();
 
 	  for (var i = 0; i < logArray.length; i++) {
@@ -183,7 +169,7 @@ App = {
 			$(".log > tbody").append(markup);
 	  }
 
-  },
+	},
 
   drawRegistry: function(holders) {
 	  $(".registry > tbody > tr").remove();
