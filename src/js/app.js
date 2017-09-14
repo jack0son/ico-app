@@ -44,6 +44,7 @@ App = {
 	},
 
 	initUI: function() {
+		App.getTokenPrice();
 
 		App.watchLog(logArray => {
 			App.drawLog(logArray);
@@ -156,6 +157,17 @@ App = {
 		});
 	},
 
+	
+	// how many token units a buyer gets per eth
+	getTokenPrice: function() {
+		App.contracts.Crowdsale.deployed().then(function(instance){
+			crowdsaleInstance = instance;
+			// rate: how many token units a buyer gets per wei
+			crowdsaleInstance.rate().then(rate => {
+				App.drawTokenPrice(web3.toWei(rate,'ether'));
+			});
+		});
+	},
 
 	updateTokensSold: function() {
 		App.contracts.Crowdsale.deployed().then(function(instance){
@@ -179,6 +191,12 @@ App = {
 
 	drawTokensSold: function(tokensSold) {
 		$("#tokens-sold").text(tokensSold);
+
+	},
+
+
+	drawTokenPrice: function(tokenPrice) {
+		$("#token-price").text(tokenPrice);
 
 	},
 
