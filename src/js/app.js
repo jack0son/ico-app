@@ -44,10 +44,12 @@ App = {
 	},
 
 	initUI: function() {
+
 		App.watchLog(logArray => {
 			App.drawLog(logArray);
 			App.updateRegistry([logArray[logArray.length-1]]);
-			App.updateTotalRaised();
+			App.updateFundsRaised();
+			App.updateTokensSold();
 		});
 		//App.initRegistry();
 	},
@@ -145,17 +147,38 @@ App = {
 		});
 	},
 
-	updateTotalRaised: function() {
+	updateFundsRaised: function() {
 		App.contracts.Crowdsale.deployed().then(function(instance){
 			crowdsaleInstance = instance;
 			crowdsaleInstance.weiRaised().then(weiRaised => {
-				App.drawTotalRaised(weiRaised);
+				App.drawFundsRaised(web3.fromWei(weiRaised,'ether'));
 			});
 		});
 	},
 
-	drawTotalRaised: function(totalRaised) {
-		$("#total-raised-value").text(totalRaised);
+
+	updateTokensSold: function() {
+		App.contracts.Crowdsale.deployed().then(function(instance){
+			crowdsaleInstance = instance;
+			crowdsaleInstance.token().then(addr => {
+				tokenAddress = addr;
+				console.log('Token address: ' + tokenAddress);
+				tokenInstance = App.contracts.MintableToken.at(tokenAddress); 
+				tokenInstance.totalSupply().then(totalSupply => {
+					console.log('Total supply: ' + totalSupply);
+					App.drawTokensSold(totalSupply);
+				});
+			});
+		});
+	},
+
+	drawFundsRaised: function(fundsRaised) {
+		$("#total-raised-value").text(fundsRaised);
+
+	},
+
+	drawTokensSold: function(tokensSold) {
+		$("#tokens-sold").text(tokensSold);
 
 	},
 
