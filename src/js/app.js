@@ -47,6 +47,7 @@ App = {
 		App.watchLog(logArray => {
 			App.drawLog(logArray);
 			App.updateRegistry([logArray[logArray.length-1]]);
+			App.updateTotalRaised();
 		});
 		//App.initRegistry();
 	},
@@ -142,6 +143,20 @@ App = {
 				});
 			});
 		});
+	},
+
+	updateTotalRaised: function() {
+		App.contracts.Crowdsale.deployed().then(function(instance){
+			crowdsaleInstance = instance;
+			crowdsaleInstance.weiRaised().then(weiRaised => {
+				App.drawTotalRaised(weiRaised);
+			});
+		});
+	},
+
+	drawTotalRaised: function(totalRaised) {
+		$("#total-raised-value").text(totalRaised);
+
 	},
 
 	drawLog: function(logArray) {
