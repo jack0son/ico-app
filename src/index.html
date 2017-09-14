@@ -61,7 +61,7 @@
             <!-- Token Price -->
             <tr>
               <td>Token Price</td>
-              <td>0.1 ETH</td>
+              <td id="token-price">0.1 ETH</td>
             </tr>
 
             <!-- Time Remaining -->
@@ -88,7 +88,7 @@
 
 
             <div class="button">
-              <button type="submit">Purchase Tokens</button>
+              <button id="purchase">Purchase Tokens</button>
             </div>
 
         </div>
@@ -104,15 +104,19 @@
         <div class="transaction-log">
 
         <table class="table transaction-log-table">
-          <tr>
+		  <thead><tr>
             <th>Address</th>
+			<th>Amount</th>
             <th>Value</th>
-          </tr>
+		  </tr></thead>
 
+
+		  <tbody>
           <tr>
             <td>0x1501375091873091875309817</td>
             <td>250</td>
           </tr>
+		  </tbody>
         </table>
 
       </div>
@@ -123,15 +127,16 @@
         <div class="registry">
 
         <table class="table registry-table">
-          <tr>
+			<thead><tr>
             <th>Address</th>
             <th>Value</th>
-          </tr>
+				</tr></thead>
 
+				<tbody>
           <tr>
             <td>0x1501375091873091875309817</td>
             <td>250</td>
-          </tr>
+		  </tr></tbody>
         </table>
 
       </div>
@@ -143,6 +148,14 @@
 <!-- <footer>
   this is the footer
 </footer> -->
+
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
 </body>
 
 

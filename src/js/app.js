@@ -39,7 +39,7 @@ App = {
 	},
 
 	bindEvents: function() {
-		$(document).on('click', '.btn-adopt', App.handlePurchase);
+		$(document).on('click', '#purchase', App.handlePurchase);
 		return App.initUI();
 	},
 
@@ -73,9 +73,7 @@ App = {
 				crowdsaleInstance = instance;
 
 				return crowdsaleInstance.sendTransaction({value:web3.toWei(2,'ether')});
-				//}).then(function(result) {
-				//	return App.markAdopted();
-				}).catch(function(err){
+			}).catch(function(err){
 				console.log(err.message);
 			});
 		});
@@ -185,12 +183,12 @@ App = {
 	},
 
 	drawFundsRaised: function(fundsRaised) {
-		$("#total-raised-value").text(fundsRaised);
+		$("#total-raised-value").text(fundsRaised + " ETH");
 
 	},
 
 	drawTokensSold: function(tokensSold) {
-		$("#tokens-sold").text(tokensSold);
+		$("#tokens-sold").text(tokensSold + " DUM");
 
 	},
 
@@ -201,26 +199,26 @@ App = {
 	},
 
 	drawLog: function(logArray) {
-		$(".log > tbody > tr").remove();
+		$(".transaction-log-table > tbody > tr").remove();
 		console.log('Draw log called.');
 
 		for (var i = 0; i < logArray.length; i++) {
 				var markup = "<tr><td>" 
-				+ i + "</td><td>"
+				//+ i + "</td><td>"
 				+ logArray[i].args.purchaser + "</td><td>"
 				+ parseInt(logArray[i].args.amount) + "  </td><td>" 
 				+ web3.toWei(parseInt(logArray[i].args.value),'ether') 
 				+ "</td></tr>";
-			$(".log > tbody").append(markup);
+			$(".transaction-log-table > tbody").append(markup);
 		}
 
 	},
 
 	drawRegistry: function(holders) {
-		console.log('Draw registry.')
+		console.log('Draw.registry-table.')
 		for(holder in holders){
-			console.log('Holder entry length: ' + $(".registry > tbody > tr#"+holder).length);
-			if($(".registry > tbody > tr#"+holder).length){
+			console.log('Holder entry length: ' + $(".registry-table > tbody > tr#"+holder).length);
+			if($(".registry-table > tbody > tr#"+holder).length){
 				App.updateHolder(holders[holder]);
 			} else {
 				App.addHolder(holders[holder]);
@@ -235,18 +233,18 @@ App = {
 			+ holder.address + "</td><td class=balance>"
 			+ holder.balance
 			+ "</td></tr>";
-		$(".registry > tbody").append(markup);
+		$(".registry-table > tbody").append(markup);
 	},
 	
 	updateHolder: function(holder) {
 		console.log('Update holder.');
 		console.log(holder);
-		$(".registry > tbody > tr#" + holder.address + " > td.balance").remove()
+		$(".registry-table > tbody > tr#" + holder.address + " > td.balance").remove()
 		//console.log(holder);
 		var markup = "<td class=balance>" 
 			+ holder.balance
 			+ "</td>";
-		$(".registry > tbody > tr#" + holder.address).append(markup);
+		$(".registry-table > tbody > tr#" + holder.address).append(markup);
 
 	}, 
 	
