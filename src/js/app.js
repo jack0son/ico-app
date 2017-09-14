@@ -44,7 +44,10 @@ App = {
 	},
 
 	initUI: function() {
-		App.watchLog();
+		App.watchLog(logArray => {
+			App.drawLog(logArray);
+			App.updateRegistry([logArray[logArray.length-1]]);
+		});
 		//App.initRegistry();
 	},
 
@@ -89,7 +92,7 @@ App = {
 		});
 	},
 
-	watchLog: function() {
+	watchLog: function(callback) {
 		var crowdsaleInstance;
 
 		var logArray = [];
@@ -104,42 +107,15 @@ App = {
 				let purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0, toBlock: 'latest'});
 				purchaseEvent.watch((error, log) => {
 					logArray.push(log);
-					App.drawLog(logArray);
-					App.updateRegistry([log]);
+					//App.drawLog(logArray);
+					//App.updateRegistry([log]);
+					callback(logArray);
 				});
 			}).catch(function(err){
 				console.log(err.message);
 			});
 		});
 	},
-
-	initRegistry: function() {
-		var holders = {}; // array of all token holders
-
-		App.contracts.Crowdsale.deployed().then(function(instance){
-			crowdsaleInstance = instance;
-			crowdsaleInstance.token().then(addr => {
-				tokenAddress = addr;
-				console.log('Token address: ' + tokenAddress);
-				tokenInstance = App.contracts.MintableToken.at(tokenAddress); 
-
-				// Get transaction history
-				App.getLog(function (logArray) {
-					let promises = logArray.map((log) => {
-						return tokenInstance.balanceOf(log.args.purchaser).then(function(balance){
-							holders[log.args.purchaser] = {'balance':balance}
-							console.log(holders[log.args.purchaser]);
-						});
-					});
-
-					Promise.all(promises).then(() => {
-						App.drawRegistry(holders);
-					});
-				});
-			});
-		});
-	},
-
 
 	updateRegistry: function(logArray) {
 		var holders = {}; // array of all token holders
@@ -184,21 +160,8 @@ App = {
 
 	},
 
-	drawRegistryOld: function(holders) {
-		$(".registry > tbody > tr").remove();
-		console.log('Draw registry called.');
-		for (holder in holders) {
-			//console.log(holder);
-			var markup = "<tr id="+holder+"><td>" 
-				+ holder + "</td><td class=balance>"
-				+ holders[holder]['balance']
-				+ "</td></tr>";
-			$(".registry > tbody").append(markup);
-		}
-	},
-
 	drawRegistry: function(holders) {
-		console.log('Update registry.')
+		console.log('Draw registry.')
 		for(holder in holders){
 			console.log('Holder entry length: ' + $(".registry > tbody > tr#"+holder).length);
 			if($(".registry > tbody > tr#"+holder).length){
