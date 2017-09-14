@@ -105,37 +105,10 @@ App = {
 				purchaseEvent.watch((error, log) => {
 					logArray.push(log);
 					App.drawLog(logArray);
-					App.updateRegistry(log);
+					App.updateRegistry([log]);
 				});
 			}).catch(function(err){
 				console.log(err.message);
-			});
-		});
-	},
-
-	updateRegistry: function(log) {
-		var holders = {}; // array of all token holders
-
-		App.contracts.Crowdsale.deployed().then(function(instance){
-			crowdsaleInstance = instance;
-			crowdsaleInstance.token().then(addr => {
-				tokenAddress = addr;
-				console.log('Token address: ' + tokenAddress);
-				tokenInstance = App.contracts.MintableToken.at(tokenAddress); 
-
-				// Get transaction history
-				App.getLog(function (logArray) {
-					let promises = logArray.map((log) => {
-						return tokenInstance.balanceOf(log.args.purchaser).then(function(balance){
-							holders[log.args.purchaser] = {'balance':balance}
-							console.log(holders[log.args.purchaser]);
-						});
-					});
-
-					Promise.all(promises).then(() => {
-						App.drawRegistry(holders);
-					});
-				});
 			});
 		});
 	},
@@ -167,6 +140,34 @@ App = {
 		});
 	},
 
+
+	updateRegistry: function(logArray) {
+		var holders = {}; // array of all token holders
+
+		App.contracts.Crowdsale.deployed().then(function(instance){
+			crowdsaleInstance = instance;
+			crowdsaleInstance.token().then(addr => {
+				tokenAddress = addr;
+				console.log('Token address: ' + tokenAddress);
+				tokenInstance = App.contracts.MintableToken.at(tokenAddress); 
+
+				// Get transaction history
+				let promises = logArray.map((log) => {
+					return tokenInstance.balanceOf(log.args.purchaser).then(function(balance){
+						holders[log.args.purchaser] = {'address':log.args.purchaser,'balance':balance}
+						console.log(holders[log.args.purchaser]);
+					});
+				});
+
+				console.log('Waiting on balance calls...');
+				Promise.all(promises).then(() => {
+					console.log('Finished balance calls.');
+					App.drawRegistry(holders);
+				});
+			});
+		});
+	},
+
 	drawLog: function(logArray) {
 		$(".log > tbody > tr").remove();
 		console.log('Draw log called.');
@@ -183,7 +184,7 @@ App = {
 
 	},
 
-	drawRegistry: function(holders) {
+	drawRegistryOld: function(holders) {
 		$(".registry > tbody > tr").remove();
 		console.log('Draw registry called.');
 		for (holder in holders) {
@@ -196,18 +197,40 @@ App = {
 		}
 	},
 
-	addHolder: function(holders) {
-		console.log('Add holder called.');
-		for (holder in holders) {
-			$(".registry > tbody > tr #" + holder + " > td.balance").remove()
-			//console.log(holder);
-			var markup = "<td class=balance>" 
-				+ holders[holder]['balance']
-				+ "</td>";
-			$(".registry > tbody > tr #" + holder).append(markup);
+	drawRegistry: function(holders) {
+		console.log('Update registry.')
+		for(holder in holders){
+			console.log('Holder entry length: ' + $(".registry > tbody > tr#"+holder).length);
+			if($(".registry > tbody > tr#"+holder).length){
+				App.updateHolder(holders[holder]);
+			} else {
+				App.addHolder(holders[holder]);
+			}
 		}
 	},
 
+
+	addHolder: function(holder) {
+		console.log('Add holder.');
+		var markup = "<tr id="+holder.address+"><td>" 
+			+ holder.address + "</td><td class=balance>"
+			+ holder.balance
+			+ "</td></tr>";
+		$(".registry > tbody").append(markup);
+	},
+	
+	updateHolder: function(holder) {
+		console.log('Update holder.');
+		console.log(holder);
+		$(".registry > tbody > tr#" + holder.address + " > td.balance").remove()
+		//console.log(holder);
+		var markup = "<td class=balance>" 
+			+ holder.balance
+			+ "</td>";
+		$(".registry > tbody > tr#" + holder.address).append(markup);
+
+	}, 
+	
 	markAdopted: function(adopters, account) {
 		var adoptionInstance;
 
