@@ -1,0 +1,99 @@
+header{
+  /*background-color: tomato;*/
+  width: 100%;
+  height:80px;
+  display: table;
+}
+
+header h1{
+  width: 25%;
+  margin: auto auto;
+  text-align: center;
+  vertical-align: middle;
+  display: table-cell;
+}
+
+body{
+
+}
+
+footer{
+  background-color: slategrey;
+}
+
+.primary-content{
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.secondary-content.left-column{
+  float: left;
+  width: 60%;
+  /*background-color: green;*/
+}
+
+img.raise-photo{
+  width: 500px;
+  height: 250px;
+  display: block;
+  margin: 0 auto;
+  background-color: grey;
+}
+
+div.raise-information{
+  max-width: 75%;
+  /*text-align: center;*/
+  display: block;
+  margin: 0 auto;
+}
+
+.secondary-content.right-column{
+  float: right;
+  width: 40%;
+  /*background-color: yellow;*/
+}
+
+.raise-metrics{
+  float: left;
+  width: 60%;
+  /*background-color: tomato;*/
+}
+
+#raise-metrics-table{
+  max-width: 80%;
+}
+
+.order-sheet{
+  float: right;
+  width: 40%;
+  border-style: solid;
+  border-width: thin;
+  /*background-color: blue;*/
+}
+
+
+div .transaction-log{
+  width: 80%;
+  height: 250px;
+  max-height: 250px;
+  overflow-y: scroll;
+  background-color: lightblue;
+  text-align: left;
+}
+
+div .registry{
+  width: 80%;
+  height: 250px;
+  max-height: 250px;
+  overflow-y: scroll;
+  background-color: lightblue;
+  text-align: left;
+}
+
+
+/*Float Clearfix*/
+.group:after{
+  content: "";
+  display: table;
+  clear: both;
+}
