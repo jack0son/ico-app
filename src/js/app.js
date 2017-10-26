@@ -47,6 +47,7 @@ App = {
 		App.getTokenPrice();
 
 		App.watchLog(logArray => {
+
 			App.drawLog(logArray);
 			App.updateRegistry([logArray[logArray.length-1]]);
 			App.updateFundsRaised();
@@ -96,23 +97,26 @@ App = {
 
 	watchLog: function(callback) {
 		var crowdsaleInstance;
-
 		var logArray = [];
 		web3.eth.getAccounts(function(error, accounts) {
 			if (error) {
 				console.log(error);
 			}
-
 			var account = accounts[3];
 			App.contracts.Crowdsale.deployed().then(function(instance){
 				crowdsaleInstance = instance;
 				let purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0, toBlock: 'latest'});
+
 				purchaseEvent.watch((error, log) => {
 					logArray.push(log);
 					//App.drawLog(logArray);
 					//App.updateRegistry([log]);
+					console.log("LOG PUSHED");
 					callback(logArray);
+
 				});
+
+
 			}).catch(function(err){
 				console.log(err.message);
 			});
@@ -127,7 +131,7 @@ App = {
 			crowdsaleInstance.token().then(addr => {
 				tokenAddress = addr;
 				console.log('Token address: ' + tokenAddress);
-				tokenInstance = App.contracts.MintableToken.at(tokenAddress); 
+				tokenInstance = App.contracts.MintableToken.at(tokenAddress);
 
 				// Get transaction history
 				let promises = logArray.map((log) => {
@@ -155,7 +159,7 @@ App = {
 		});
 	},
 
-	
+
 	// how many token units a buyer gets per eth
 	getTokenPrice: function() {
 		App.contracts.Crowdsale.deployed().then(function(instance){
@@ -173,7 +177,7 @@ App = {
 			crowdsaleInstance.token().then(addr => {
 				tokenAddress = addr;
 				console.log('Token address: ' + tokenAddress);
-				tokenInstance = App.contracts.MintableToken.at(tokenAddress); 
+				tokenInstance = App.contracts.MintableToken.at(tokenAddress);
 				tokenInstance.totalSupply().then(totalSupply => {
 					console.log('Total supply: ' + totalSupply);
 					App.drawTokensSold(totalSupply);
@@ -203,14 +207,15 @@ App = {
 		console.log('Draw log called.');
 
 		for (var i = 0; i < logArray.length; i++) {
-				var markup = "<tr><td>" 
-				//+ i + "</td><td>"
+				var markup = "<tr><td>"
+				+ i + "</td><td>"
 				+ logArray[i].args.purchaser + "</td><td>"
-				+ parseInt(logArray[i].args.amount) + "  </td><td>" 
-				+ web3.toWei(parseInt(logArray[i].args.value),'ether') 
+				+ parseInt(logArray[i].args.amount) + "</td><td>"
+				+ parseInt(logArray[i].args.value)/1000000000000000000
 				+ "</td></tr>";
 			$(".transaction-log-table > tbody").append(markup);
 		}
+
 
 	},
 
@@ -229,25 +234,25 @@ App = {
 
 	addHolder: function(holder) {
 		console.log('Add holder.');
-		var markup = "<tr id="+holder.address+"><td>" 
+		var markup = "<tr id="+holder.address+"><td>"
 			+ holder.address + "</td><td class=balance>"
 			+ holder.balance
 			+ "</td></tr>";
 		$(".registry-table > tbody").append(markup);
 	},
-	
+
 	updateHolder: function(holder) {
 		console.log('Update holder.');
 		console.log(holder);
 		$(".registry-table > tbody > tr#" + holder.address + " > td.balance").remove()
 		//console.log(holder);
-		var markup = "<td class=balance>" 
+		var markup = "<td class=balance>"
 			+ holder.balance
 			+ "</td>";
 		$(".registry-table > tbody > tr#" + holder.address).append(markup);
 
-	}, 
-	
+	},
+
 	markAdopted: function(adopters, account) {
 		var adoptionInstance;
 

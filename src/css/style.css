@@ -1,7 +1,11 @@
+* {
+  font-family: 'Lato', sans-serif;
+}
+
 header{
   /*background-color: tomato;*/
   width: 100%;
-  height:80px;
+  height:60px;
   display: table;
 }
 
@@ -11,10 +15,14 @@ header h1{
   text-align: center;
   vertical-align: middle;
   display: table-cell;
+  font-weight: 200;
+  font-size: 5em;
+  text-transform: uppercase;
 }
 
 body{
-
+  background-image: url("../images/shattered_@2X.png");
+  background-size: contain;
 }
 
 footer{
@@ -22,14 +30,35 @@ footer{
 }
 
 .primary-content{
-  max-width: 90%;
+  max-width: 95%;
   margin: 0 auto;
+  /*margin-top: 10px;*/
 }
 
 .secondary-content.left-column{
   float: left;
   width: 60%;
   /*background-color: green;*/
+}
+
+.secondary-content.right-column{
+  float: right;
+  width: 40%;
+  /*background-color: yellow;*/
+  box-shadow: 0 0px 8px 1px rgba(0, 0, 0, 0.2);
+}
+
+h1#company-name{
+  font-weight: 300;
+  text-transform: uppercase;
+  font-size: 4em;
+}
+
+h1.card-heading{
+  font-weight: 300;
+  /*font-size:3.5em;*/
+  padding: 5px;
+  border-bottom: 2px solid rgba(0,0,0,0.2);
 }
 
 img.raise-photo{
@@ -45,51 +74,72 @@ div.raise-information{
   /*text-align: center;*/
   display: block;
   margin: 0 auto;
+  font-weight: 200;
+
 }
 
-.secondary-content.right-column{
-  float: right;
-  width: 40%;
-  /*background-color: yellow;*/
+div.raise-information h2{
+  font-weight: 300;
 }
+
+
 
 .raise-metrics{
   float: left;
-  width: 60%;
-  /*background-color: tomato;*/
+  width: 50%;
+  background-color: rgba(252, 250, 250,0.3);
+  padding: 1em;
+  box-shadow: 0 0px 8px 1px rgba(0, 0, 0, 0.2);
 }
 
 #raise-metrics-table{
-  max-width: 80%;
+  /*max-width: 80%;*/
 }
 
 .order-sheet{
   float: right;
-  width: 40%;
-  border-style: solid;
-  border-width: thin;
-  /*background-color: blue;*/
+  width: 45%;
+  /*border-style: solid;
+  border-width: thin;*/
+  background-color: rgba(252, 250, 250,0.3);
+  padding: 1em;
+  box-shadow: 0 0px 8px 1px rgba(0, 0, 0, 0.2);
 }
+
 
 
 div .transaction-log{
-  width: 80%;
+  /*width: 80%;*/
   height: 250px;
   max-height: 250px;
   overflow-y: scroll;
-  background-color: lightblue;
+  background-color: rgba(252, 250, 250,0.3);
   text-align: left;
+  /*padding:0;*/
 }
+
+
+div .registry-container{
+  background-color: rgba(252, 250, 250,0.3);
+}
+
+div .transaction-container{
+  background-color: rgba(252, 250, 250,0.3);
+}
+
 
 div .registry{
-  width: 80%;
+  /*width: 80%;*/
   height: 250px;
   max-height: 250px;
   overflow-y: scroll;
-  background-color: lightblue;
+  background-color: rgba(252, 250, 250,0.3);
   text-align: left;
 }
 
+td{
+  font-weight: 300;
+}
 
 /*Float Clearfix*/
 .group:after{
