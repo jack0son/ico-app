@@ -12,7 +12,7 @@ App = {
 			App.web3Provider = web3.currentProvider;
 			web3 = new Web3(web3.currentProvider);
 		} else {
-			App.web3Provider = new web3.providers.HttpProvider('http://localhost:8445');
+			App.web3Provider = new web3.providers.HttpProvider('http://localhost:8545');
 			web3 = new Web3(App.web3Provider);
 		}
 
@@ -40,18 +40,21 @@ App = {
 
 	bindEvents: function() {
 		$(document).on('click', '#purchase', App.handlePurchase);
+
 		return App.initUI();
 	},
 
 	initUI: function() {
 		App.getTokenPrice();
-
+		console.log("INIT UI CALLED");
 		App.watchLog(logArray => {
-
+			console.log("LOG ARRAY LENGTH: ");
+			console.log(logArray.length);
 			App.drawLog(logArray);
 			App.updateRegistry([logArray[logArray.length-1]]);
 			App.updateFundsRaised();
 			App.updateTokensSold();
+			App.updateSharesRemaining();
 		});
 		//App.initRegistry();
 	},
@@ -68,12 +71,12 @@ App = {
 				console.log(error);
 			}
 
-			var account = accounts[3];
+			//var account = accounts[3];
 			//
 			App.contracts.Crowdsale.deployed().then(function(instance){
 				crowdsaleInstance = instance;
 
-				return crowdsaleInstance.sendTransaction({value:web3.toWei(2,'ether')});
+				return crowdsaleInstance.sendTransaction({value:web3.toWei(1,'ether')});
 			}).catch(function(err){
 				console.log(err.message);
 			});
@@ -102,18 +105,15 @@ App = {
 			if (error) {
 				console.log(error);
 			}
-			var account = accounts[3];
+			// var account = accounts[3];
 			App.contracts.Crowdsale.deployed().then(function(instance){
 				crowdsaleInstance = instance;
+
 				let purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0, toBlock: 'latest'});
 
 				purchaseEvent.watch((error, log) => {
 					logArray.push(log);
-					//App.drawLog(logArray);
-					//App.updateRegistry([log]);
-					console.log("LOG PUSHED");
 					callback(logArray);
-
 				});
 
 
@@ -154,6 +154,7 @@ App = {
 		App.contracts.Crowdsale.deployed().then(function(instance){
 			crowdsaleInstance = instance;
 			crowdsaleInstance.weiRaised().then(weiRaised => {
+				// App.drawFundsRaised(web3.fromWei(weiRaised,'ether'));
 				App.drawFundsRaised(web3.fromWei(weiRaised,'ether'));
 			});
 		});
@@ -166,7 +167,8 @@ App = {
 			crowdsaleInstance = instance;
 			// rate: how many token units a buyer gets per wei
 			crowdsaleInstance.rate().then(rate => {
-				App.drawTokenPrice(web3.toWei(rate,'ether'));
+				// App.drawTokenPrice(web3.toWei(rate,'ether'));
+				App.drawTokenPrice(rate);
 			});
 		});
 	},
@@ -186,19 +188,39 @@ App = {
 		});
 	},
 
+	updateSharesRemaining: function() {
+		App.contracts.Crowdsale.deployed().then(function(instance){
+			crowdsaleInstance = instance;
+			crowdsaleInstance.token().then(addr => {
+				tokenAddress = addr;
+				console.log('Token address: ' + tokenAddress);
+				tokenInstance = App.contracts.MintableToken.at(tokenAddress);
+				tokenInstance.totalSupply().then(totalSupply => {
+					console.log('Total supply: ' + totalSupply);
+					App.drawSharesRemaining(totalSupply);
+				});
+			});
+		});
+	},
+
 	drawFundsRaised: function(fundsRaised) {
 		$("#total-raised-value").text(fundsRaised + " ETH");
 
 	},
 
 	drawTokensSold: function(tokensSold) {
-		$("#tokens-sold").text(tokensSold + " DUM");
+		$("#tokens-sold").text(web3.fromWei(tokensSold, "ether") + " shares");
+
+	},
+
+	drawSharesRemaining: function(tokensSold) {
+		$("#shares-remaining").text(400-web3.fromWei(tokensSold, "ether") + " shares");
 
 	},
 
 
 	drawTokenPrice: function(tokenPrice) {
-		$("#token-price").text(tokenPrice);
+		$("#token-price").text(tokenPrice + " ETH/share");
 
 	},
 
@@ -210,8 +232,8 @@ App = {
 				var markup = "<tr><td>"
 				+ i + "</td><td>"
 				+ logArray[i].args.purchaser + "</td><td>"
-				+ parseInt(logArray[i].args.amount) + "</td><td>"
-				+ parseInt(logArray[i].args.value)/1000000000000000000
+				+ parseInt(web3.fromWei(logArray[i].args.amount, "ether")) + " shares" + "</td><td>"
+				+ parseInt(web3.fromWei(logArray[i].args.value, "ether")) + " ETH"
 				+ "</td></tr>";
 			$(".transaction-log-table > tbody").append(markup);
 		}
@@ -236,7 +258,7 @@ App = {
 		console.log('Add holder.');
 		var markup = "<tr id="+holder.address+"><td>"
 			+ holder.address + "</td><td class=balance>"
-			+ holder.balance
+			+ web3.fromWei(holder.balance, "ether")
 			+ "</td></tr>";
 		$(".registry-table > tbody").append(markup);
 	},
@@ -246,8 +268,9 @@ App = {
 		console.log(holder);
 		$(".registry-table > tbody > tr#" + holder.address + " > td.balance").remove()
 		//console.log(holder);
-		var markup = "<td class=balance>"
-			+ holder.balance
+		var markup =
+			"<td class=balance>"
+			+ web3.fromWei(holder.balance, "ether")
 			+ "</td>";
 		$(".registry-table > tbody > tr#" + holder.address).append(markup);
 

@@ -39,9 +39,15 @@
         <div class="raise-metrics mr-2">
           <h1 class="card-heading">Raise Metrics</h1>
           <table class="table table-bordered" id="raise-metrics-table">
+
+						<tr>
+							<td>Equity on Offer</td>
+							<td id="equity-on-offer">40%</td>
+						</tr>
+
             <!-- Ether invested -->
             <tr>
-              <td>Total Raised</td>
+              <td>Total Funds Raised</td>
               <td id="total-raised-value">150 ETH</td>
             </tr>
 
@@ -53,8 +59,8 @@
 
             <!-- Tokens Sold -->
             <tr>
-              <td>Tokens Sold</td>
-              <td id="tokens-sold">5,000</td>
+              <td>Shares Sold</td>
+              <td id="tokens-sold">0</td>
             </tr>
 
             <!-- Tokens Remaining NOT USED-->
@@ -63,10 +69,18 @@
               <td>45,000</td>
             </tr> -->
 
-            <!-- Token Price -->
+
+
+						<!-- Shares on offer -->
             <tr>
-              <td>Token Price</td>
-              <td id="token-price">0.1 ETH</td>
+              <td>Shares Remaining</td>
+              <td id="shares-remaining">400</td>
+            </tr>
+
+						<!-- Token Price -->
+            <tr>
+              <td>Share Price</td>
+              <td id="token-price">1 ETH/share</td>
             </tr>
 
             <!-- Time Remaining NOT USED-->
@@ -141,7 +155,8 @@
 	        <table class="table-responsive table table-striped registry-table">
 				<thead><tr>
 	            <th>Address</th>
-	            <th>Value</th>
+	            <th>Shares Held</th>
+							<th>% Ownership</th>
 					</tr></thead>
 
 					<tbody>
