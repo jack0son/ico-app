@@ -50,8 +50,8 @@ App = {
 		App.watchLog(logArray => {
 			console.log("LOG ARRAY LENGTH: ", logArray.length);
 			App.drawLog(logArray);
-			App.updateRegistry(logArray);
-			//App.updateRegistry([logArray[logArray.length-1]]);
+			//App.updateRegistry(logArray);
+			App.updateRegistry([logArray[logArray.length-1]]);
 			App.updateFundsRaised();
 			App.updateTokensSold();
 			App.updateSharesRemaining();
@@ -111,8 +111,9 @@ App = {
 
 				//let purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0});//, toBlock: 'latest'});
 
-				let purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0}, (error,log) => {//, toBlock: 'latest'});
-				//purchaseEvent.watch((error, log) => {
+				var purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0, toBlock: 'latest'});//, (error,log) => {//, toBlock: 'latest'});
+				purchaseEvent.watch((error, log) => {
+					console.log('pushing entry to log');
 					logArray.push(log);
 					callback(logArray);
 				});
