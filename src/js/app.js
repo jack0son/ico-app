@@ -48,10 +48,10 @@ App = {
 		App.getTokenPrice();
 		console.log("INIT UI CALLED");
 		App.watchLog(logArray => {
-			console.log("LOG ARRAY LENGTH: ");
-			console.log(logArray.length);
+			console.log("LOG ARRAY LENGTH: ", logArray.length);
 			App.drawLog(logArray);
-			App.updateRegistry([logArray[logArray.length-1]]);
+			App.updateRegistry(logArray);
+			//App.updateRegistry([logArray[logArray.length-1]]);
 			App.updateFundsRaised();
 			App.updateTokensSold();
 			App.updateSharesRemaining();
@@ -109,12 +109,14 @@ App = {
 			App.contracts.Crowdsale.deployed().then(function(instance){
 				crowdsaleInstance = instance;
 
-				let purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0, toBlock: 'latest'});
+				//let purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0});//, toBlock: 'latest'});
 
-				purchaseEvent.watch((error, log) => {
+				let purchaseEvent = crowdsaleInstance.TokenPurchase({},{fromBlock: 0}, (error,log) => {//, toBlock: 'latest'});
+				//purchaseEvent.watch((error, log) => {
 					logArray.push(log);
 					callback(logArray);
 				});
+				console.log("Finished watching.")
 
 
 			}).catch(function(err){
@@ -130,7 +132,7 @@ App = {
 			crowdsaleInstance = instance;
 			crowdsaleInstance.token().then(addr => {
 				tokenAddress = addr;
-				console.log('Token address: ' + tokenAddress);
+				//console.log('Token address: ' + tokenAddress);
 				tokenInstance = App.contracts.MintableToken.at(tokenAddress);
 
 				// Get transaction history
@@ -178,10 +180,10 @@ App = {
 			crowdsaleInstance = instance;
 			crowdsaleInstance.token().then(addr => {
 				tokenAddress = addr;
-				console.log('Token address: ' + tokenAddress);
+				//console.log('Token address: ' + tokenAddress);
 				tokenInstance = App.contracts.MintableToken.at(tokenAddress);
 				tokenInstance.totalSupply().then(totalSupply => {
-					console.log('Total supply: ' + totalSupply);
+					//console.log('Total supply: ' + totalSupply);
 					App.drawTokensSold(totalSupply);
 				});
 			});
@@ -193,10 +195,10 @@ App = {
 			crowdsaleInstance = instance;
 			crowdsaleInstance.token().then(addr => {
 				tokenAddress = addr;
-				console.log('Token address: ' + tokenAddress);
+				//console.log('Token address: ' + tokenAddress);
 				tokenInstance = App.contracts.MintableToken.at(tokenAddress);
 				tokenInstance.totalSupply().then(totalSupply => {
-					console.log('Total supply: ' + totalSupply);
+					//console.log('Total supply: ' + totalSupply);
 					App.drawSharesRemaining(totalSupply);
 				});
 			});
@@ -244,7 +246,9 @@ App = {
 	drawRegistry: function(holders) {
 		console.log('Draw.registry-table.')
 		for(holder in holders){
-			console.log('Holder entry length: ' + $(".registry-table > tbody > tr#"+holder).length);
+			// Number of entries in registry for a holder
+			// (should only be 1 or 0
+			//console.log('Holder entry length: ' + $(".registry-table > tbody > tr#"+holder).length);
 			if($(".registry-table > tbody > tr#"+holder).length){
 				App.updateHolder(holders[holder]);
 			} else {
