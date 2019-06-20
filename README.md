@@ -1,4 +1,4 @@
-#ICO-APP#
+# ICO-APP
 
 Basic Ethereum based ICO web app with token registry view.
 
