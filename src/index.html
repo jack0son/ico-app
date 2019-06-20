@@ -1,84 +1,192 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>ICO APP</title>
-	<style type="text/css">
-		form{
-			margin: 20px 0;
-		}
-		form input, button{
-			padding: 5px;
-		}
-		table{
-			width: 100%;
-			margin-bottom: 20px;
-			border-collapse: collapse;
-		}
-		table, th, td{
-			border: 1px solid #cdcdcd;
-		}
-		table th, table td{
-			padding: 10px;
-			text-align: left;
-		}
-	</style>
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900" rel="stylesheet">
+   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+	 	<link rel="stylesheet" type="text/css" href="css/style.css">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="container">
-		 <button class="btn btn-default btn-adopt" type="button" data-id="0">BUY</button>
 
+
+
+</head>
+<body>
+<header>
+  <!-- <h1>Capital Raise Handler</h1> -->
+</header>
+
+<div class="primary-content">
+  <div class="group">
+    <div class="secondary-content left-column">
+      <div class="raise-information">
+        <h1 id="company-name">XYZ Limited</h1>
+
+        <img class="raise-photo"></img>
+				<div class = "raise-description m-3">
+
+
+        <h2>Raise Information</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget.
+        </p>
+				</div>
+
+
+      <div class="group">
+        <div class="raise-metrics mr-2">
+          <h1 class="card-heading">Raise Metrics</h1>
+          <table class="table table-bordered" id="raise-metrics-table">
+
+						<tr>
+							<td>Equity on Offer</td>
+							<td id="equity-on-offer">40%</td>
+						</tr>
+
+            <!-- Ether invested -->
+            <tr>
+              <td>Total Funds Raised</td>
+              <td id="total-raised-value">150 ETH</td>
+            </tr>
+
+            <!-- Target investment (in ETH) NOT USED -->
+            <!-- <tr>
+              <td>Target</td>
+              <td>400 ETH</td>
+            </tr> -->
+
+            <!-- Tokens Sold -->
+            <tr>
+              <td>Shares Sold</td>
+              <td id="tokens-sold">0</td>
+            </tr>
+
+            <!-- Tokens Remaining NOT USED-->
+            <!-- <tr>
+              <td>Tokens Remaining</td>
+              <td>45,000</td>
+            </tr> -->
+
+
+
+						<!-- Shares on offer -->
+            <tr>
+              <td>Shares Remaining</td>
+              <td id="shares-remaining">400</td>
+            </tr>
+
+						<!-- Token Price -->
+            <tr>
+              <td>Share Price</td>
+              <td id="token-price">1 ETH/share</td>
+            </tr>
+
+            <!-- Time Remaining NOT USED-->
+            <!-- <tr>
+              <td>Time Remaining</td>
+              <td>100 Blocks</td>
+            </tr> -->
+
+          </table>
+        </div>
+
+
+        <div  class="order-sheet">
+          <h1 class="card-heading">Order Sheet</h1>
+
+            <!-- <div>
+              <label for="amount">Amount: </label>
+              <input type="number" id="amount" name="purchase_amount">
+            </div>
+
+            <div>
+              <label for="amount">Tokens: calculate this</label>
+            </div> -->
+
+
+            <div class="button">
+              <button id="purchase">Purchase Shares</button>
+            </div>
+
+        </div>
+
+      </div>
+      </div>
     </div>
 
+    <div class="secondary-content right-column">
 
-	<div>
-	<table class="raise-metrics">
-		<!--<thead><tr><th>Holder</th><th>Amount</th></tr</thead>-->
-		<tbody>
-			<tr><td>Total Raised:</td><td id=total-raised-value>0</td></tr>
-			<tr><td>Tokens Sold</td><td id=tokens-sold>0</td></tr>
-			<tr><td>Token Price</td><td id=token-price>0</td></tr>
-		</tbody>
-	</table>
-	</div> 
+			<div class="transaction-container p-3">
+        <h1 class="card-heading">Transaction Log</h1>
 
-	<div>
-	<table class="registry">
-		<thead><tr><th>Holder</th><th>Amount</th></tr</thead>
-		<tbody>
-		</tbody>
-	</table>
-	</div> 
+        <div class="transaction-log" >
 
-	<div>
-	<table class="log">
-		<thead><tr><th>i</th><th>Purchaser</th><th>Amount</th><th>Value</th></tr></thead>
-		<tbody>
-		</tbody>
-	</table>
-
-	</div> 
+			<!-- <div class="table-responsive"> -->
+				<table class="table-responsive table table-striped transaction-log-table">
+					<thead><tr>
+						<th>
+							#
+						</th>
+					    <th>Address</th>
+					<th>Amount</th>
+					    <th>Value</th>
+					</tr></thead>
 
 
+					<tbody>
+					  <!-- <tr>
+					    <td>0x1501375091873091875309817</td>
+					    <td>250</td>
+					  </tr> -->
+					</tbody>
+				</table>
+			</div>
+			</div>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+      <!-- </div> -->
+
+			<div class="registry-container p-3">
+        <h1 class="mt-4 card-heading">Registry</h1>
+
+
+					<div class="registry">
+	        <table class="table-responsive table table-striped registry-table">
+				<thead><tr>
+	            <th>Address</th>
+	            <th>Shares Held</th>
+							<th>% Ownership</th>
+					</tr></thead>
+
+					<tbody>
+	          <!-- <tr>
+	            <td>0x1501375091873091875309817</td>
+	            <td>250</td>
+			  		</tr> -->
+					</tbody>
+	        </table>
+
+	      </div>
+			</div>
+			</div>
+    </div>
+</div>
+
+
+
+<!-- <footer>
+  this is the footer
+</footer> -->
+
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/web3.min.js"></script>
     <script src="js/truffle-contract.js"></script>
     <script src="js/app.js"></script>
-  </body>
+</body>
+
+
 </html>
